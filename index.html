@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <div>
+            <h1>Formations - Formulaire</h1>
+            <div>
+                <form id="formationForm">
+                    <label for="title">Titre :</label>
+                    <input type="text" id="title" name="title" required>
+                    <br>
+                    <label for="categorie">Catégorie :</label>
+                    <input type="text" id="categorie" name="categorie" required>
+                    <br>
+                    <label for="level">Niveau :</label>
+                    <input type="text" id="level" name="level" required>
+                    <br>
+                    <label for="duration">Durée en heures :</label>
+                    <input type="text" id="duration" name="duration" required>
+                    <br>
+                    <input type="submit" value="Ajouter">
+                </form>
+            </div>
+        </div>
+        <h1>Formations - List</h1>
+        <div>
+            <ul id="formationsList">
+                <p>Aucune formation enregistrée.</p>
+            </ul>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
