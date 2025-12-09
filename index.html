@@ -11,19 +11,26 @@
             <h1>Formations - Formulaire</h1>
             <div>
                 <form id="formationForm">
+                    <input type="hidden" id="formationId" value="">
+
                     <label for="title">Titre :</label>
+                    <br>
                     <input type="text" id="title" name="title" required>
                     <br>
                     <label for="categorie">Catégorie :</label>
+                    <br>
                     <input type="text" id="categorie" name="categorie" required>
                     <br>
                     <label for="level">Niveau :</label>
+                    <br>
                     <input type="text" id="level" name="level" required>
                     <br>
                     <label for="duration">Durée en heures :</label>
+                    <br>
                     <input type="text" id="duration" name="duration" required>
                     <br>
-                    <input type="submit" value="Ajouter">
+                    <br>
+                    <input type="submit" id="submitButton" value="Ajouter" style="cursor: pointer;">
                 </form>
             </div>
         </div>

@@ -55,18 +55,18 @@ class LocalStorageManager {
 }
 
 class Formation {
-    constructor(titre, categorie, niveau, temp) {
+    constructor(title, categorie, level, duration) {
         this.id = Date.now(); 
-        this.titre = titre;
+        this.title = title;
         this.categorie = categorie;
-        this.niveau = niveau;
-        this.temp = temp;
+        this.level = level;
+        this.duration = duration;
     }
 }
 
 const formationManager = new LocalStorageManager('formations');
 
-function attacherEcouteurs() {
+function addListeners() {
     document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', function() {
             const idToDelete = Number(this.dataset.id); 
@@ -74,16 +74,28 @@ function attacherEcouteurs() {
             if (confirm(`Êtes-vous sûr de vouloir supprimer cette formation ?`)) {
                 if (formationManager.delete(idToDelete)) {
                     console.log('Formation supprimée !');
-                    afficherListeFormations();
+                    showFormations();
                 } else {
                     console.error('Erreur: Formation non trouvée.');
                 }
             }
         });
     });
+    document.querySelectorAll('.update-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const idToUpdate = Number(this.dataset.id); 
+            const formationToUpdate = formationManager.readOne(idToUpdate);
+            
+            if (formationToUpdate) {
+                fillForm(formationToUpdate); 
+            } else {
+                alert('Erreur: Formation introuvable pour modification.');
+            }
+        });
+    });
 }
 
-function afficherListeFormations() {
+function showFormations() {
     const listeUl = document.getElementById('formationsList');
     listeUl.innerHTML = '';
     
@@ -99,34 +111,81 @@ function afficherListeFormations() {
         
         li.innerHTML = `
             <div>
-                <strong>${formation.titre}</strong> 
-                (Cat: ${formation.categorie} | Niveau: ${formation.niveau} | Durée: ${formation.temp}h)
+                <strong>${formation.title}</strong> 
+                (Cat: ${formation.categorie} | Niveau: ${formation.level} | Durée: ${formation.duration}h)
             </div>
             <div class="actions">
                 <button class="delete-btn" data-id="${formation.id}">Supprimer</button>
+                <button class="update-btn" data-id="${formation.id}">Modifier</button>
             </div>
         `;
         
         listeUl.appendChild(li);
     });
 
-    attacherEcouteurs();
+    addListeners();
+}
+
+const submitButton = document.getElementById('submitButton');
+const updateInput = document.getElementById('formationId');
+
+function fillForm(formation) {
+    document.getElementById('title').value = formation.title;
+    document.getElementById('categorie').value = formation.categorie;
+    document.getElementById('level').value = formation.level;
+    document.getElementById('duration').value = formation.duration;
+    
+    updateInput.value = formation.id;
+    
+    switchForm('edit');
+}
+
+function switchForm(mode) {
+    if (mode === 'edit') {
+        submitButton.value = "Modifier";
+        submitButton.style.backgroundColor = 'orange';
+    } else {
+        submitButton.value = "Ajouter";
+        submitButton.style.backgroundColor = '';
+        document.getElementById('formationForm').reset();
+        updateInput.value = '';
+    }
 }
 
 document.getElementById('formationForm').addEventListener('submit', function(event) {
     event.preventDefault();
+
+    const editId = updateInput.value;
 
     const title = document.getElementById('title').value;
     const categorie = document.getElementById('categorie').value;
     const level = document.getElementById('level').value;
     const duration = document.getElementById('duration').value;
 
-    const nouvelleFormation = new Formation(title, categorie, level, duration);
+    let formation;
 
-    formationManager.create(nouvelleFormation);
+    if (editId) {
+        formation = new Formation(title, categorie, level, duration);
+        formation.id = Number(editId);
+        
+        if (formationManager.update(formation)) {
+            console.log('Formation mise à jour avec succès !');
+        } else {
+            console.log('Erreur lors de la mise à jour.');
+        }
 
-    this.reset();
-    afficherListeFormations();
+        switchForm('create');
+
+        this.reset();
+        window.location.reload();
+        
+    } else {
+        formation = new Formation(title, categorie, level, duration);
+        formationManager.create(formation);
+        this.reset();
+    }
+
+    showFormations();
 });
 
-document.addEventListener('DOMContentLoaded', afficherListeFormations);
+document.addEventListener('DOMContentLoaded', showFormations);
